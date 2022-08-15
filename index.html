@@ -55,16 +55,20 @@
                     var preco = dados[x].preco;
                     var fornecedor = dados[x].fornecedor;
 
+                    
+
                     tabela +="<tr>";
                         tabela +="<td class='second'>"+ nome + "</td>";
                         tabela +="<td class='second'> R$"+ preco + "</td>";
                         tabela +="<td class='second'>"+ fornecedor + "</td>";
                     tabela +="</tr>";
 
+                    var espacos = ``+tabela+``
+
                     total += parseFloat((dados[x].preco));
                 }
                 document.getElementById("total").innerHTML = "Total : R$" + total;
-                document.getElementById("data").innerHTML = tabela;
+                document.getElementById("data").innerHTML = espacos;
             }
 
         }
@@ -147,11 +151,8 @@
         <button type="button" class="btn btn-primary" id="btncep" onclick="valuecep()">Confirmar</button>
 
         <div id="espaco">
-
         </div>
-        
 
-        
-        
+        <p id="final">André Meneses</p>
 </body>
 </html>
