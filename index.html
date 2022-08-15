@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Vendas</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
+</head>
+<body>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa" crossorigin="anonymous"></script>
+    <script>
+
+        pegadados(0,"")
+
+        function referencia(){
+            var ref = prompt("Digite a referencia do produto")
+            if(ref === null){
+                return;
+            }
+            pegadados(1, ref)
+        }
+
+        function nome(){
+            var nome = prompt("Digite o nome do produto")
+            if(nome === null){
+                return;
+            }
+            pegadados(2, nome)
+        }
+
+        function geral(){
+            pegadados(0,"")
+        }
+
+        function pegadados(numero, texto){
+            var ajax = new XMLHttpRequest()
+            var metodo = "GET";
+            var url = "query.php?s=" + numero + "&t=" + texto;
+
+            ajax.open(metodo,url,true);
+            ajax.send();
+            
+
+            ajax.onreadystatechange = function(){
+                if(this.readyState == 4 && this.status == 200){
+                    var dados = JSON.parse(this.responseText);
+                }
+                var tabela = "";
+                var total = 0;
+
+                for(var x = 0; x < dados.length; x++){
+                    var nome = dados[x].nome;
+                    var preco = dados[x].preco;
+                    var fornecedor = dados[x].fornecedor;
+
+                    
+
+                    tabela +="<tr>";
+                        tabela +="<td class='second'>"+ nome + "</td>";
+                        tabela +="<td class='second'> R$"+ preco + "</td>";
+                        tabela +="<td class='second'>"+ fornecedor + "</td>";
+                    tabela +="</tr>";
+
+                    var espacos = ``+tabela+``
+
+                    total += parseFloat((dados[x].preco));
+                }
+                document.getElementById("total").innerHTML = "Total : R$" + total;
+                document.getElementById("data").innerHTML = espacos;
+            }
+
+        }
+
+        function valuecep(){
+            var cep = document.getElementById("valuecep").value;
+            pegacep(cep)
+        }
+
+        function pegacep(cep){
+            var ajax = new XMLHttpRequest()
+            var metodo = "GET";
+            var url = "cep.php?num=" + cep;
+
+            ajax.open(metodo,url,true);
+            ajax.send();
+
+            ajax.onreadystatechange = function(){
+                if(this.readyState == 4 && this.status == 200){
+                    rescep = JSON.parse(this.responseText)
+                    var transforma = JSON.parse(rescep)
+                    
+                    var uf = transforma.uf
+                    var cidade = transforma.localidade
+                    var bairro = transforma.bairro
+                    var rua = transforma.logradouro
+
+                    var modelo = ""
+                    
+
+                    
+                    modelo += "<div id='ceptext'>"
+                        modelo += "<p class=resultado>RESULTADO</p>"
+                        modelo += "<p class=tests>UF:" +uf+"</p>"
+                        modelo += "<p class=tests>Cidade: " +cidade+"</p>"
+                        modelo += "<p class=tests>Bairro: " +bairro+"</p>"
+                    modelo += "<p class=tests>Rua: " +rua+"</p>"
+                    modelo += "</div>"
+                    modelo += '<button type="button" class="btn btn-primary" id="brnsave" onclick="salvar()">Salvar Compra</button>'
+
+                    var umol = ``+modelo+``
+
+                    document.getElementById("espaco").innerHTML = umol
+                }
+            }
+        }
+
+
+        
+        
+    </script>
+        <div class="topo">Controle de Vendas</div>
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th class="first">Nome</th>
+                    <th class="first">Preco</th>
+                    <th class="first">Fornecedores</th>
+                </tr>
+            </thead>   
+
+            <tbody id="data">
+            </tbody>
+        </table>
+
+        <h2 id="total">Total: </h2>
+
+        <div class="Pesquisas">
+            <form action="" method="post">
+                <button type="button" class="btn btn-primary" onclick="geral()">Pesquisa Geral</button>
+                <button type="button" class="btn btn-primary" onclick="referencia()">Pesquisar por referencia</button>
+                <button type="button" class="btn btn-primary" onclick="nome()">Pesquisar por Nome</button>
+            </form>
+        </div>
+
+        <div class="caixacep">
+            <input type="number" class="CEP" id="valuecep" placeholder="CEP" min="0" oninput="this.value = !!this.value && Math.abs(this.value) >= 0 ? Math.abs(this.value) : null" ></input>
+        </div>
+        <button type="button" class="btn btn-primary" id="btncep" onclick="valuecep()">Confirmar</button>
+
+        <div id="espaco">
+        </div>
+
+        <p id="final">André Meneses</p>
+</body>
+</html>
